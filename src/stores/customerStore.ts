@@ -6,7 +6,7 @@ interface CustomerState {
   customers: Customer[];
   setCustomers: (customers: Customer[]) => void;
   addCustomer: (customer: Customer) => void;
-  updateCustomer: (customer: Customer) => void;
+  updateCustomer: (id: string, updates: Partial<Customer>) => void;
   removeCustomer: (id: string) => void;
 }
 
@@ -23,8 +23,8 @@ export const useCustomerStore = create<CustomerState>((set, get) => ({
     set({ customers });
     saveToStorage(STORAGE_KEY, customers);
   },
-  updateCustomer: (customer) => {
-    const customers = get().customers.map((c) => (c.id === customer.id ? customer : c));
+  updateCustomer: (id, updates) => {
+    const customers = get().customers.map((c) => (c.id === id ? { ...c, ...updates, updatedAt: new Date() } : c));
     set({ customers });
     saveToStorage(STORAGE_KEY, customers);
   },
