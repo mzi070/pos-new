@@ -149,7 +149,7 @@ function ProductCard({
         {/* Badge */}
         {product.badge && (
           <div className="absolute top-2 left-2">
-            <Badge variant={product.badgeColor as any}>{product.badge}</Badge>
+            <Badge variant={(product.badgeColor || 'default') as 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'}>{product.badge}</Badge>
           </div>
         )}
 
@@ -315,7 +315,7 @@ function ProductListView({
             {product.rating && (
               <div className="flex items-center gap-2 mb-2">
                 <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_: unknown, i: number) => (
                     <span key={i} className={i < Math.floor(product.rating || 0) ? '' : 'opacity-30'}>
                       ★
                     </span>

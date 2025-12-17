@@ -8,7 +8,7 @@ export interface Column<T> {
   label: string;
   sortable?: boolean;
   width?: string;
-  render?: (value: any, row: T) => ReactNode;
+  render?: (value: unknown, row: T) => ReactNode;
   mobile?: boolean; // Show on mobile
   tablet?: boolean; // Show on tablet
   desktop?: boolean; // Show on desktop (default true if not specified)
@@ -16,7 +16,7 @@ export interface Column<T> {
 
 export type SortOrder = 'asc' | 'desc' | null;
 
-interface ResponsiveTableProps<T extends Record<string, any>> {
+interface ResponsiveTableProps<T extends Record<string, unknown>> {
   columns: Column<T>[];
   data: T[];
   keyExtractor: (row: T, index: number) => string;
@@ -42,7 +42,7 @@ interface ResponsiveTableProps<T extends Record<string, any>> {
  * Tablet: Horizontal scroll with fixed first column
  * Mobile: Card-based list view
  */
-export function ResponsiveTable<T extends Record<string, any>>({
+export function ResponsiveTable<T extends Record<string, unknown>>({
   columns,
   data,
   keyExtractor,
@@ -243,10 +243,10 @@ export function ResponsiveTable<T extends Record<string, any>>({
 /**
  * Table skeleton loader
  */
-function TableSkeleton<T extends Record<string, any>>({ columns }: { columns: Column<T>[] }) {
+function TableSkeleton<T extends Record<string, unknown>>({ columns }: { columns: Column<T>[] }) {
   return (
     <div className="space-y-2 p-4">
-      {[...Array(5)].map((_, i) => (
+      {[...Array(5)].map((_: unknown, i: number) => (
         <div key={i} className="flex gap-4 p-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse">
           {columns.map((col) => (
             <div key={String(col.key)} className="flex-1 h-4 bg-slate-300 dark:bg-slate-600 rounded" />
@@ -260,7 +260,7 @@ function TableSkeleton<T extends Record<string, any>>({ columns }: { columns: Co
 /**
  * Advanced table with filtering, sorting, and export
  */
-interface AdvancedTableProps<T extends Record<string, any>> extends ResponsiveTableProps<T> {
+interface AdvancedTableProps<T extends Record<string, unknown>> extends ResponsiveTableProps<T> {
   searchable?: boolean;
   searchPlaceholder?: string;
   onSearch?: (query: string) => void;
@@ -274,7 +274,7 @@ interface AdvancedTableProps<T extends Record<string, any>> extends ResponsiveTa
   }[];
 }
 
-export function AdvancedTable<T extends Record<string, any>>({
+export function AdvancedTable<T extends Record<string, unknown>>({
   columns,
   data,
   keyExtractor,

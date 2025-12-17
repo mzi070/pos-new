@@ -1,19 +1,23 @@
 import { useCartStore } from '@/stores/cartStore';
 import { useTransactionStore } from '@/stores/transactionStore';
 import { useCustomerStore } from '@/stores/customerStore';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 const paymentMethods = [
   { value: 'cash', label: 'Cash' },
   { value: 'card', label: 'Card' },
-  { value: 'mobile', label: 'Mobile Payment' },
-  { value: 'split', label: 'Split Payment' },
+  { value: 'check', label: 'Check' },
+  { value: 'digital', label: 'Digital Payment' },
 ];
 
 export default function CheckoutModal({ onClose, onComplete }: { onClose: () => void; onComplete: (txnId: string) => void }) {
   const { items, clearCart } = useCartStore();
   const { addTransaction } = useTransactionStore();
   const { customers } = useCustomerStore();
+
+  // eslint-disable-next-line react-hooks/purity
+  const timestamp = useMemo(() => Date.now(), []);
+  
   const subtotal = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
   const tax = +(subtotal * 0.07).toFixed(2);
   const discount = 0;
@@ -32,22 +36,21 @@ export default function CheckoutModal({ onClose, onComplete }: { onClose: () => 
       const paid = Number(cashReceived) || 0;
       if (paid < total) return alert('Insufficient cash received.');
     }
-    if (paymentMethod === 'split') {
-      const cash = Number(split.cash) || 0;
-      const card = Number(split.card) || 0;
-      if (cash + card < total) return alert('Total payment is less than total due.');
+    if (paymentMethod === 'digital') {
+      const paid = Number(cashReceived) || 0;
+      if (paid < total) return alert('Insufficient digital payment.');
     }
-    const id = Math.random().toString(36).slice(2);
+    const id = crypto.randomUUID();
     addTransaction({
       id,
-      transactionNumber: `TXN${Date.now()}`,
+      transactionNumber: `TXN${timestamp}`,
       customerId: customerId || undefined,
       items,
       subtotal,
       tax,
       discount,
       total,
-      paymentMethod: paymentMethod as any,
+      paymentMethod: paymentMethod as 'cash' | 'card' | 'check' | 'digital',
       status: 'completed',
       notes: '',
       createdAt: new Date(),

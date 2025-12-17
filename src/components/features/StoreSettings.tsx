@@ -21,7 +21,7 @@ export default function StoreSettings() {
   const handleReset = () => {
     if (window.confirm('Reset all settings to defaults?')) {
       resetSettings();
-      setFormData(resetSettings as any);
+      setFormData(settings);
     }
   };
 

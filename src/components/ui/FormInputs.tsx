@@ -125,7 +125,7 @@ export const Input = forwardRef<HTMLInputElement, FormInputProps>(
 
 Input.displayName = 'Input';
 
-interface PasswordInputProps extends Omit<FormInputProps, 'type'> {}
+type PasswordInputProps = Omit<FormInputProps, 'type'>;
 
 /**
  * Password input with show/hide toggle

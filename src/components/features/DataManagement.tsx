@@ -12,7 +12,7 @@ export default function DataManagement() {
       exportBackup();
       setRestoreStatus({ type: 'success', message: 'Backup exported successfully!' });
       setTimeout(() => setRestoreStatus(null), 3000);
-    } catch (error) {
+    } catch {
       setRestoreStatus({ type: 'error', message: 'Failed to export backup' });
     }
   };

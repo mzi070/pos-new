@@ -49,6 +49,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const user = users.find(u => u.email === email && u.password === password && u.active);
 
     if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password: _, ...userWithoutPassword } = user;
       set({ currentUser: userWithoutPassword, isAuthenticated: true });
       saveToStorage(STORAGE_KEY, userWithoutPassword);

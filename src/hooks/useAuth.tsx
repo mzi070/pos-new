@@ -21,7 +21,7 @@ export function ProtectedRoute({ children, requiredRole = 'cashier' }: Protected
   return <>{children}</>;
 }
 
-export function useAuth() {
+function useAuthHook() {
   const { currentUser, isAuthenticated, login, logout, hasPermission } = useAuthStore();
 
   return {
@@ -35,3 +35,6 @@ export function useAuth() {
     isCashier: currentUser?.role === 'cashier',
   };
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { useAuthHook as useAuth };

@@ -16,7 +16,10 @@ export type Breakpoint = keyof typeof BREAKPOINTS;
  * Usage: const isMobile = useMediaQuery('md');
  */
 export function useMediaQuery(breakpoint: Breakpoint | number): boolean {
-  const [matches, setMatches] = useState(false);
+  const [matches, setMatches] = useState(() => {
+    const value = typeof breakpoint === 'number' ? breakpoint : BREAKPOINTS[breakpoint];
+    return window.matchMedia(`(min-width: ${value}px)`).matches;
+  });
 
   useEffect(() => {
     const value = typeof breakpoint === 'number' ? breakpoint : BREAKPOINTS[breakpoint];
@@ -26,9 +29,6 @@ export function useMediaQuery(breakpoint: Breakpoint | number): boolean {
     const handleChange = (e: MediaQueryListEvent) => {
       setMatches(e.matches);
     };
-
-    // Set initial value
-    setMatches(mediaQuery.matches);
 
     // Add listener
     mediaQuery.addEventListener('change', handleChange);
@@ -43,10 +43,14 @@ export function useMediaQuery(breakpoint: Breakpoint | number): boolean {
  * Hook to detect current viewport size
  */
 export function useViewport() {
-  const isMobile = !useMediaQuery('md');
-  const isTablet = useMediaQuery('md') && !useMediaQuery('lg');
-  const isDesktop = useMediaQuery('lg');
-  const isLandscape = useMediaQuery(1024) && !isMobile;
+  const isMd = useMediaQuery('md');
+  const isLg = useMediaQuery('lg');
+  const is1024 = useMediaQuery(1024);
+
+  const isMobile = !isMd;
+  const isTablet = isMd && !isLg;
+  const isDesktop = isLg;
+  const isLandscape = is1024 && !isMobile;
 
   return { isMobile, isTablet, isDesktop, isLandscape };
 }
@@ -78,19 +82,32 @@ export function useOrientation() {
  * Hook for touch device detection
  */
 export function useTouchDevice() {
-  const [isTouch, setIsTouch] = useState(false);
+  const [isTouch, setIsTouch] = useState(() => {
+    return (
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      (typeof (window as Window & { DocumentTouch?: unknown }).DocumentTouch !== 'undefined')
+    );
+  });
 
   useEffect(() => {
-    const hasTouch = () => {
-      return (
+    const handleChange = () => {
+      setIsTouch(
         window.matchMedia('(hover: none)').matches ||
-        window.matchMedia('(pointer: coarse)').matches ||
-        'ontouchstart' in window ||
-        (window as any).DocumentTouch !== undefined
+          window.matchMedia('(pointer: coarse)').matches ||
+          'ontouchstart' in window ||
+          (typeof (window as Window & { DocumentTouch?: unknown }).DocumentTouch !== 'undefined')
       );
     };
 
-    setIsTouch(hasTouch());
+    window.addEventListener('orientationchange', handleChange);
+    window.addEventListener('resize', handleChange);
+
+    return () => {
+      window.removeEventListener('orientationchange', handleChange);
+      window.removeEventListener('resize', handleChange);
+    };
   }, []);
 
   return isTouch;
