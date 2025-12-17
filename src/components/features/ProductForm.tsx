@@ -38,7 +38,7 @@ export default function ProductForm({ product, onClose }: ProductFormProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.id) {
-      updateProduct({ ...form, updatedAt: new Date() });
+      updateProduct(form.id, { ...form, updatedAt: new Date() });
     } else {
       addProduct({ ...form, id: Math.random().toString(36).slice(2), createdAt: new Date(), updatedAt: new Date() });
     }

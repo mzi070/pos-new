@@ -6,7 +6,7 @@ interface ProductState {
   products: Product[];
   setProducts: (products: Product[]) => void;
   addProduct: (product: Product) => void;
-  updateProduct: (product: Product) => void;
+  updateProduct: (id: string, updates: Partial<Product>) => void;
   removeProduct: (id: string) => void;
 }
 
@@ -23,8 +23,8 @@ export const useProductStore = create<ProductState>((set, get) => ({
     set({ products });
     saveToStorage(STORAGE_KEY, products);
   },
-  updateProduct: (product) => {
-    const products = get().products.map((p) => (p.id === product.id ? product : p));
+  updateProduct: (id, updates) => {
+    const products = get().products.map((p) => (p.id === id ? { ...p, ...updates } : p));
     set({ products });
     saveToStorage(STORAGE_KEY, products);
   },

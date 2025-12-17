@@ -7,10 +7,15 @@ export interface Product {
   price: number;
   cost: number;
   categoryId: string;
+  category?: string;
   sku: string;
   barcode: string;
   quantity: number;
   minQuantity: number;
+  maxQuantity?: number;
+  reorderPoint?: number;
+  reorderQuantity?: number;
+  supplierId?: string;
   image?: string;
   active: boolean;
   createdAt: Date;
