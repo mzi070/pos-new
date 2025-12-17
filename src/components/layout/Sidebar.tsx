@@ -1,20 +1,24 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, BarChart3, Package, Receipt, Users, Boxes, Menu } from 'lucide-react'
+import { ShoppingCart, BarChart3, Package, Receipt, Users, Boxes, Menu, Settings } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true)
   const location = useLocation()
+  const { currentUser } = useAuth()
 
   const menuItems = [
-    { icon: BarChart3, label: 'Dashboard', path: '/' },
-    { icon: ShoppingCart, label: 'POS', path: '/pos' },
-    { icon: Package, label: 'Products', path: '/products' },
-    { icon: Boxes, label: 'Inventory', path: '/inventory' },
-    { icon: Receipt, label: 'Transactions', path: '/transactions' },
-    { icon: Users, label: 'Customers', path: '/customers' },
+    { icon: BarChart3, label: 'Dashboard', path: '/dashboard', roles: ['admin', 'manager', 'cashier'] },
+    { icon: ShoppingCart, label: 'POS', path: '/pos', roles: ['cashier', 'manager', 'admin'] },
+    { icon: Package, label: 'Products', path: '/products', roles: ['manager', 'admin'] },
+    { icon: Boxes, label: 'Inventory', path: '/inventory', roles: ['manager', 'admin'] },
+    { icon: Receipt, label: 'Transactions', path: '/transactions', roles: ['manager', 'admin'] },
+    { icon: Users, label: 'Customers', path: '/customers', roles: ['manager', 'admin'] },
+    { icon: Settings, label: 'Settings', path: '/settings', roles: ['admin', 'manager', 'cashier'] },
   ]
 
+  const visibleItems = menuItems.filter(item => item.roles.includes(currentUser?.role || 'cashier'))
   const isActive = (path: string) => location.pathname === path
 
   return (
@@ -36,7 +40,7 @@ export default function Sidebar() {
         </div>
 
         <nav className="px-4 py-6 space-y-2">
-          {menuItems.map((item) => {
+          {visibleItems.map((item) => {
             const Icon = item.icon
             const active = isActive(item.path)
             return (
@@ -64,3 +68,4 @@ export default function Sidebar() {
     </>
   )
 }
+
