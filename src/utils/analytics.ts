@@ -1,4 +1,4 @@
-import type { Transaction, Product } from '@/types';
+import type { Transaction, Product, Category } from '@/types';
 
 export interface DailySales {
   date: string;
@@ -60,7 +60,7 @@ export function getTopProducts(transactions: Transaction[]): TopProduct[] {
   return Object.values(products).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
 }
 
-export function getSalesByCategory(transactions: Transaction[], categories: any[]): CategorySales[] {
+export function getSalesByCategory(transactions: Transaction[], categories: Category[]): CategorySales[] {
   const categoryMap: { [key: string]: CategorySales } = {};
 
   categories.forEach(cat => {
@@ -89,7 +89,7 @@ export function getAverageOrderValue(transactions: Transaction[]): number {
   return getTotalSales(transactions) / transactions.length;
 }
 
-export function exportToCSV(data: any[], filename: string) {
+export function exportToCSV(data: Record<string, string | number>[], filename: string) {
   const headers = Object.keys(data[0] || {});
   const csv = [
     headers.join(','),

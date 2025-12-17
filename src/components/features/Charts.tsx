@@ -1,5 +1,5 @@
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import type { DailySales } from '@/utils/analytics';
+import type { DailySales, CategorySales } from '@/utils/analytics';
 
 interface RevenueChartProps {
   data: DailySales[];
@@ -41,7 +41,7 @@ export function TransactionCountChart({ data }: RevenueChartProps) {
   );
 }
 
-export function CategorySalesChart({ data }: { data: any[] }) {
+export function CategorySalesChart({ data }: { data: CategorySales[] }) {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <h3 className="font-semibold mb-4">Sales by Category</h3>
