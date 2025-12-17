@@ -28,11 +28,8 @@ export default function CheckoutModal({ onClose, onComplete }: { onClose: () => 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    let paid = total;
-    let change = 0;
     if (paymentMethod === 'cash') {
-      paid = Number(cashReceived) || 0;
-      change = paid - total;
+      const paid = Number(cashReceived) || 0;
       if (paid < total) return alert('Insufficient cash received.');
     }
     if (paymentMethod === 'split') {

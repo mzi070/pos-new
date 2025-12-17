@@ -1,13 +1,22 @@
+import { useState } from 'react';
 import { useCartStore } from '@/stores/cartStore';
+import CheckoutModal from './CheckoutModal';
 
-export default function Cart() {
+export default function Cart({ onTransactionComplete }: { onTransactionComplete?: (txnId: string) => void }) {
   const { items, updateQuantity, removeItem, clearCart } = useCartStore();
+  const [showCheckout, setShowCheckout] = useState(false);
   const subtotal = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
   const tax = +(subtotal * 0.07).toFixed(2); // 7% tax
   const discount = 0; // Placeholder for discount logic
   const total = subtotal + tax - discount;
 
+  function handleCheckoutComplete(txnId: string) {
+    setShowCheckout(false);
+    if (onTransactionComplete) onTransactionComplete(txnId);
+  }
+
   return (
+    <>
     <div className="bg-white rounded-lg shadow p-4 flex flex-col gap-4 min-w-[320px]">
       <div className="flex justify-between items-center">
         <h2 className="font-semibold text-lg">Cart</h2>
@@ -36,7 +45,15 @@ export default function Cart() {
         <div className="flex justify-between"><span>Discount</span><span>${discount.toFixed(2)}</span></div>
         <div className="flex justify-between font-bold text-lg"><span>Total</span><span>${total.toFixed(2)}</span></div>
       </div>
-      <button className="w-full bg-primary-600 text-white py-2 rounded hover:bg-primary-700 mt-2">Checkout</button>
+      <button className="w-full bg-primary-600 text-white py-2 rounded hover:bg-primary-700 mt-2 disabled:opacity-50" onClick={() => setShowCheckout(true)} disabled={items.length === 0}>Checkout</button>
     </div>
+    {showCheckout && (
+      <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+          <CheckoutModal onClose={() => setShowCheckout(false)} onComplete={handleCheckoutComplete} />
+        </div>
+      </div>
+    )}
+    </>
   );
 }
